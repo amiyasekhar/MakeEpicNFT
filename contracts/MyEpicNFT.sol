@@ -4,8 +4,6 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import "hardhat/console.sol";
 
 // We need to import the helper functions from the contract that we copy/pasted.
@@ -17,6 +15,7 @@ contract MyEpicNFT is ERC721URIStorage{
   address payable private _reciever;
   uint256 private _maxSupply = 420;
 
+
   string baseSvg = "<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='xMinYMin meet' viewBox='0 0 350 350'><style>.base { fill: white; font-family: serif; font-size: 24px; }</style><rect width='100%' height='100%' fill='black' /><text x='50%' y='50%' class='base' dominant-baseline='middle' text-anchor='middle'>";
   string[] firstWords = ["I", "HAVE", "AN", "AMEX", "PLATINUM", "CARD"];
   string[] secondWords = ["THAT", "NEEDS", "TO", "BE", "UPGRADED", "TO"];
@@ -25,11 +24,16 @@ contract MyEpicNFT is ERC721URIStorage{
 
   constructor() ERC721 ("SquareNFT", "SQUARE") {
     console.log("This is my NFT contract. Woah!");
-    //_reciever = payable(address(this));
+    _reciever = payable(address(this));
   }
 
   function makeAnEpicNFT() public payable {
     uint256 newItemId = _tokenIds.current();
+    require(newItemId < _maxSupply);
+    console.log(msg.value, "message value");
+    console.log((msg.sender), "sender address");
+    console.log((msg.sender).balance, "balance");
+    require(msg.value >= 0.002 ether, "Need to send 0.002 ether or more");
     string memory first = pickRandomFirstWord(newItemId);
     string memory second = pickRandomSecondWord(newItemId);
     string memory third = pickRandomThirdWord(newItemId);
@@ -64,6 +68,7 @@ contract MyEpicNFT is ERC721URIStorage{
     
     // Update your URI!!!
     _setTokenURI(newItemId, finalTokenUri);
+    console.log(_reciever.balance, "owners balance");
     _reciever.transfer(msg.value);
     _tokenIds.increment();
     console.log("An NFT w/ ID %s has been minted to %s", newItemId, msg.sender, msg.value);
@@ -73,7 +78,7 @@ contract MyEpicNFT is ERC721URIStorage{
     event Received(address, uint);
       receive() external payable {
           emit Received(msg.sender, msg.value);
-          console.log("Received", msg.sender, msg.value);
+          console.log( msg.sender, msg.value, _reciever.balance);
       }
 
   function pickRandomFirstWord(uint256 tokenId) public view returns (string memory) {
@@ -104,5 +109,6 @@ contract MyEpicNFT is ERC721URIStorage{
 
 
   
-
+//https://stackoverflow.com/questions/70936795/how-to-set-msg-value-in-remix-ide
+//https://forum.openzeppelin.com/t/implementation-of-sellable-nft/5517
 }

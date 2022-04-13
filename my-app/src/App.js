@@ -68,7 +68,7 @@ const App = () => {
     }
   }
   const askContractToMintNft = async () => {
-    const CONTRACT_ADDRESS = "0x9448A4BA5Aa8EebB5E34B098F0e734d55EfdFd9B";
+    const CONTRACT_ADDRESS = "0x6552a1B2c2Bb6c69A7107b4C727aF8D78F939960";
   
     try {
       const { ethereum } = window;
@@ -147,4 +147,5 @@ Let's say you want to change your contract. You'd need to do 3 things:
 We need to deploy it again.
 We need to update the contract address on our frontend.
 We need to update the abi file on our frontend.
+https://www.youtube.com/watch?v=XLrhD6GHi0E
 */
