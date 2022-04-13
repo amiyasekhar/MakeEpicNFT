@@ -22,7 +22,7 @@ contract MyEpicNFT is ERC721URIStorage{
   string[] thirdWords = ["A", "CENTURION", "BECAUSE", "IT", "IS", "COOL"];
   event NewEpicNFTMinted(address sender, uint256 tokenId);
 
-  constructor() ERC721 ("SquareNFT", "SQUARE") {
+  constructor() ERC721 ("SquareNFT", "SQUARE") payable {
     console.log("This is my NFT contract. Woah!");
     _reciever = payable(address(this));
   }
