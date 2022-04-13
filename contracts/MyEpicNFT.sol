@@ -30,7 +30,7 @@ contract MyEpicNFT is ERC721URIStorage{
   function makeAnEpicNFT() public payable {
     uint256 newItemId = _tokenIds.current();
     require(newItemId < _maxSupply);
-    console.log(_reciever, "this address");
+    console.log(_reciever, "owner address");
     console.log(msg.value, "message sender value");
     console.log((msg.sender), "sender address");
     console.log((msg.sender).balance, "sender balance");
