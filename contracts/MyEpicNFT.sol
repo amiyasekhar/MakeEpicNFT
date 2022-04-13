@@ -30,15 +30,11 @@ contract MyEpicNFT is ERC721URIStorage{
   function makeAnEpicNFT() public payable {
     uint256 newItemId = _tokenIds.current();
     require(newItemId < _maxSupply);
-    uint256 initialRecieverBalance = _reciever.balance;
-    uint256 initialSenderBalance = (msg.sender).balance;
     console.log(_reciever, "owner address");
-    console.log(_reciever.balance, "owners balance");
     console.log(msg.value, "message sender value");
     console.log(gasleft(), "gas fee");
     console.log((msg.sender), "sender address");
-    console.log((msg.sender).balance, "sender balance");
-    //require(msg.value >= 0.002 ether, "Need to send 0.002 ether or more");
+    //require(msg.value >= 0.2 ether, "Need to send 0.2 ether or more");
     string memory first = pickRandomFirstWord(newItemId);
     string memory second = pickRandomSecondWord(newItemId);
     string memory third = pickRandomThirdWord(newItemId);
@@ -73,11 +69,11 @@ contract MyEpicNFT is ERC721URIStorage{
     
     // Update your URI!!!
     _setTokenURI(newItemId, finalTokenUri);
-    console.log(initialRecieverBalance < _reciever.balance); //supposed to show true
-    console.log(initialSenderBalance < (msg.sender).balance); //supposed to show true
-    console.log(gasleft(), "gas fee");
 
     //_reciever.transfer(msg.value);
+    address recipient = 0xc51573625b845826Bc3f98f2191AEa6b17Cde013;
+    emit Transfer(address(this), recipient, balanceOf(address(this)));
+
 
     _tokenIds.increment();
     console.log("An NFT w/ ID %s has been minted to %s", newItemId, msg.sender, msg.value);
@@ -115,6 +111,8 @@ contract MyEpicNFT is ERC721URIStorage{
   function random(string memory input) internal pure returns (uint256) {
       return uint256(keccak256(abi.encodePacked(input)));
   }
+
+
 
 
   
