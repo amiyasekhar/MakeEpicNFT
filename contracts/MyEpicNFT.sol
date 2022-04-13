@@ -30,8 +30,12 @@ contract MyEpicNFT is ERC721URIStorage{
   function makeAnEpicNFT() public payable {
     uint256 newItemId = _tokenIds.current();
     require(newItemId < _maxSupply);
+    uint256 initialRecieverBalance = _reciever.balance;
+    uint256 initialSenderBalance = (msg.sender).balance;
     console.log(_reciever, "owner address");
+    console.log(_reciever.balance, "owners balance");
     console.log(msg.value, "message sender value");
+    console.log(gasleft(), "gas fee");
     console.log((msg.sender), "sender address");
     console.log((msg.sender).balance, "sender balance");
     //require(msg.value >= 0.002 ether, "Need to send 0.002 ether or more");
@@ -61,16 +65,20 @@ contract MyEpicNFT is ERC721URIStorage{
         abi.encodePacked("data:application/json;base64,", json)
     );
 
-    console.log("\n--------------------");
-    console.log(finalTokenUri);
-    console.log("--------------------\n");
+    //console.log("\n--------------------");
+    //console.log(finalTokenUri);
+    //console.log("--------------------\n");
 
     _safeMint(msg.sender, newItemId);
     
     // Update your URI!!!
     _setTokenURI(newItemId, finalTokenUri);
-    console.log(_reciever.balance, "owners balance");
-    _reciever.transfer(msg.value);
+    console.log(initialRecieverBalance < _reciever.balance); //supposed to show true
+    console.log(initialSenderBalance < (msg.sender).balance); //supposed to show true
+    console.log(gasleft(), "gas fee");
+
+    //_reciever.transfer(msg.value);
+
     _tokenIds.increment();
     console.log("An NFT w/ ID %s has been minted to %s", newItemId, msg.sender, msg.value);
     emit NewEpicNFTMinted(msg.sender, newItemId);
