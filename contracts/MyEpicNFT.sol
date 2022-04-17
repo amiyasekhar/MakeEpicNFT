@@ -12,7 +12,7 @@ import { Base64 } from "./libraries/Base64.sol";
 contract MyEpicNFT is ERC721URIStorage{
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;
-  address payable private _reciever;
+  address payable _reciever;
   uint256 private _maxSupply = 420;
 
 
@@ -34,7 +34,7 @@ contract MyEpicNFT is ERC721URIStorage{
     console.log(msg.value, "message sender value");
     console.log(gasleft(), "gas fee");
     console.log((msg.sender), "sender address");
-    //require(msg.value >= 0.2 ether, "Need to send 0.2 ether or more");
+    require(msg.value >= 0.2 ether, "Need to send 0.2 ether or more");
     string memory first = pickRandomFirstWord(newItemId);
     string memory second = pickRandomSecondWord(newItemId);
     string memory third = pickRandomThirdWord(newItemId);
@@ -66,26 +66,25 @@ contract MyEpicNFT is ERC721URIStorage{
     //console.log("--------------------\n");
 
     _safeMint(msg.sender, newItemId);
-    
+    _reciever.transfer(msg.value);
     // Update your URI!!!
     _setTokenURI(newItemId, finalTokenUri);
 
-    //_reciever.transfer(msg.value);
-    address recipient = 0xc51573625b845826Bc3f98f2191AEa6b17Cde013;
-    emit Transfer(address(this), recipient, balanceOf(address(this)));
+    console.log(balanceOf(address(this)), "contract balance");
+
 
 
     _tokenIds.increment();
-    console.log("An NFT w/ ID %s has been minted to %s", newItemId, msg.sender, msg.value);
+    console.log("An NFT w/ ID %s has been minted to %s", newItemId, balanceOf(msg.sender));
     emit NewEpicNFTMinted(msg.sender, newItemId);
   }
 
-    event Received(address, uint);
-      receive() external payable {
-          emit Received(msg.sender, msg.value);
-          console.log( msg.sender, msg.value, _reciever.balance);
-      }
-
+  event Received(address, uint);
+    receive() external payable {
+        emit Received(msg.sender, msg.value);
+        console.log( msg.sender, msg.value, _reciever.balance);
+    }
+/////////////////////////////////////////////////
   function pickRandomFirstWord(uint256 tokenId) public view returns (string memory) {
     uint256 rand = random(string(abi.encodePacked("FIRST_WORD", Strings.toString(tokenId))));
     rand = rand % firstWords.length;
