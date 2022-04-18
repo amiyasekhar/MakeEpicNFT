@@ -5,8 +5,8 @@ import myEpicNft from './utils/MyEpicNFT.json';
 import { ethers } from "ethers";
 const TWITTER_HANDLE = '_buildspace';
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
-const OPENSEA_LINK = '';
-const TOTAL_MINT_COUNT = 50;
+//const OPENSEA_LINK = '';
+//const TOTAL_MINT_COUNT = 50;
 
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
@@ -68,7 +68,7 @@ const App = () => {
     }
   }
   const askContractToMintNft = async () => {
-    const CONTRACT_ADDRESS = "0xa8959f60f70795cea0fB38E3Db1AD3aA4f11AD12";
+    const CONTRACT_ADDRESS = "0xf045f5ED9EBaA9A43b42c4751dC15775F87D34AE";
   
     try {
       const { ethereum } = window;
@@ -79,10 +79,13 @@ const App = () => {
         const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, myEpicNft.abi, signer);
         connectedContract.on("NewEpicNFTMinted", (from, tokenId) => {
           console.log(from, tokenId.toNumber())
-          alert(`Hey there! We've minted your NFT and sent it to your wallet. It may be blank right now. It can take a max of 10 min to show up on OpenSea. Here's the link: https://rinkeby.rarible.com/token/${CONTRACT_ADDRESS}:${tokenId.toNumber()}`)
+          alert(`Hey there! We've minted your NFT and sent it to your wallet. It may be blank right now. It can take a max of 10 min to show up on OpenSea. Here's the link: https://rinkeby.rarible.com/token/${CONTRACT_ADDRESS}:${tokenId.toNumber()}
+          \nhttps://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}
+          \nThe following information will be needed to import your NFT into your wallet
+          \nCONTRACT ADDRESS: ${CONTRACT_ADDRESS}, TOKEN ID ${tokenId.toNumber()}`)
         });
         console.log("Going to pop wallet now to pay gas...")
-        let nftTxn = await connectedContract.makeAnEpicNFT();
+        let nftTxn = await connectedContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.2")});
   
         console.log("Mining...please wait.")
         await nftTxn.wait();
@@ -126,15 +129,6 @@ const App = () => {
               Mint NFT
             </button>
           )}
-        </div>
-        <div className="footer-container">
-          <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
-          <a
-            className="footer-text"
-            href={TWITTER_LINK}
-            target="_blank"
-            rel="noreferrer"
-          >{`built on @${TWITTER_HANDLE}`}</a>
         </div>
       </div>
     </div>
