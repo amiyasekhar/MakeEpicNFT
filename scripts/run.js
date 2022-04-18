@@ -9,9 +9,9 @@ const main = async () => {
 
 
   // Call the function.
-  let txn = await nftContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.2"), gasLimit: 3000000})
+  /*let txn = await nftContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.2")})
   // Wait for it to be mined.
-  await txn.wait()
+  await txn.wait()*/
 
 
 

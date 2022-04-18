@@ -8,11 +8,11 @@ const main = async () => {
 
 
   // Call the function.
-  let txn = await nftContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.2"), gasLimit: 30000})
+  /*let txn = await nftContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.2")})
   // Wait for it to be mined.
   await txn.wait()
   console.log("Minted NFT #1")
-  console.log("TokenID: ", nftContract.returnTokenID());
+  console.log("TokenID: ", nftContract.returnTokenID());*/
 };
 
 const runMain = async () => {

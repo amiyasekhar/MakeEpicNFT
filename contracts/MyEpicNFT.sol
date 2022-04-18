@@ -5,15 +5,18 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "hardhat/console.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
 // We need to import the helper functions from the contract that we copy/pasted.
 import { Base64 } from "./libraries/Base64.sol";
 
-contract MyEpicNFT is ERC721URIStorage{
+contract MyEpicNFT is ERC721URIStorage, Ownable{
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;
   address payable _reciever;
   uint256 private _maxSupply = 420;
+  uint256 private royalty = 25;
 
 
   string baseSvg = "<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='xMinYMin meet' viewBox='0 0 350 350'><style>.base { fill: white; font-family: serif; font-size: 24px; }</style><rect width='100%' height='100%' fill='black' /><text x='50%' y='50%' class='base' dominant-baseline='middle' text-anchor='middle'>";
@@ -22,14 +25,13 @@ contract MyEpicNFT is ERC721URIStorage{
   string[] thirdWords = ["A", "CENTURION", "BECAUSE", "IT", "IS", "COOL"];
   event NewEpicNFTMinted(address sender, uint256 tokenId);
 
-  constructor() ERC721 ("SquareNFT", "SQUARE") payable {
+  constructor() ERC721 ("Custom NFT", "NFT") payable {
     console.log("This is my NFT contract. Woah!");
     _reciever = payable(address(this));
   }
 
   function makeAnEpicNFT() external payable {
     uint256 newItemId = _tokenIds.current();
-    require(newItemId < _maxSupply);
     console.log(_reciever, "contract address");
     console.log(balanceOf(_reciever), "contract balance");
     console.log(msg.sender, "sender address");
@@ -69,7 +71,6 @@ contract MyEpicNFT is ERC721URIStorage{
     //console.log("--------------------\n");
 
     _safeMint(msg.sender, newItemId);
-    _reciever.transfer(msg.value);
     // Update your URI!!!
     _setTokenURI(newItemId, finalTokenUri);
 
@@ -79,7 +80,9 @@ contract MyEpicNFT is ERC721URIStorage{
 
     _tokenIds.increment();
     console.log("An NFT w/ ID %s has been minted to %s", newItemId, balanceOf(msg.sender));
+    sendBalanceToAddress();
     emit NewEpicNFTMinted(msg.sender, newItemId);
+
   }
 
   event Received(address, uint);
@@ -112,6 +115,17 @@ contract MyEpicNFT is ERC721URIStorage{
 
   function random(string memory input) internal pure returns (uint256) {
       return uint256(keccak256(abi.encodePacked(input)));
+  }
+
+  function sendBalanceToAddress() internal{
+    address reciever = 0xc51573625b845826Bc3f98f2191AEa6b17Cde013;
+    uint256 amount = 0.2 ether;
+    require(
+        amount <= address(this).balance,
+        "Trying to withdraw more money than the contract has."
+    );
+    (bool success,) = (reciever).call{value: amount}("");
+    require(success, "Failed to withdraw money from contract.");
   }
 
 
