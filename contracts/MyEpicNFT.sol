@@ -27,14 +27,17 @@ contract MyEpicNFT is ERC721URIStorage{
     _reciever = payable(address(this));
   }
 
-  function makeAnEpicNFT() public payable {
+  function makeAnEpicNFT() external payable {
     uint256 newItemId = _tokenIds.current();
     require(newItemId < _maxSupply);
-    console.log(_reciever, "owner address");
+    console.log(_reciever, "contract address");
+    console.log(balanceOf(_reciever), "contract balance");
+    console.log(msg.sender, "sender address");
+    console.log(balanceOf(msg.sender), "sender balance");
     console.log(msg.value, "message sender value");
     console.log(gasleft(), "gas fee");
-    console.log((msg.sender), "sender address");
     require(msg.value >= 0.2 ether, "Need to send 0.2 ether or more");
+
     string memory first = pickRandomFirstWord(newItemId);
     string memory second = pickRandomSecondWord(newItemId);
     string memory third = pickRandomThirdWord(newItemId);
