@@ -122,7 +122,7 @@ const App = () => {
         <div className="header-container">
           <p className="header gradient-text">My NFT Collection</p>
           <p className="sub-text">
-            Each unique. Each beautiful. Discover my NFT's today! - Abby xoxo.
+            Each unique. Each beautiful. Discover The Abby Fitzpatrick Collection.
           </p>
           {currentAccount === "" ? (
             renderNotConnectedContainer()
