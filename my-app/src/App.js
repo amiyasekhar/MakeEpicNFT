@@ -126,7 +126,7 @@ const App = () => {
             renderNotConnectedContainer()
           ) : (
             <button onClick={askContractToMintNft} className="cta-button connect-wallet-button">
-              Mint NFT
+              Mint NFT for 0.2 ETH
             </button>
           )}
         </div>
