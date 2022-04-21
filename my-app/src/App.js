@@ -10,7 +10,8 @@ const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
-  
+  const CONTRACT_ADDRESS = "0xA63eB815Da1B47D28080e084Fa2B5962a63D84bc";
+
   const checkIfWalletIsConnected = async () => {
     const { ethereum } = window;
 
@@ -26,6 +27,7 @@ const App = () => {
     if (accounts.length !== 0) {
       const account = accounts[0];
       console.log("Found an authorized account:", account);
+      console.log("Contract deployed at: ", CONTRACT_ADDRESS);
       setCurrentAccount(account);
     } else {
       console.log("No authorized account found");
@@ -68,7 +70,7 @@ const App = () => {
     }
   }
   const askContractToMintNft = async () => {
-    const CONTRACT_ADDRESS = "0xA63eB815Da1B47D28080e084Fa2B5962a63D84bc";
+
   
     try {
       const { ethereum } = window;
