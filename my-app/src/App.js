@@ -87,7 +87,18 @@ const App = () => {
           \nCONTRACT ADDRESS: ${CONTRACT_ADDRESS}, TOKEN ID ${tokenId.toNumber()}`)
         });
         console.log("Going to pop wallet now to pay gas...")
-        let nftTxn = await connectedContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.2")});
+        let tokensMinted = connectedContract.returnTokenID() + 1;
+        let nftTxn;
+        if (tokensMinted < 8){
+          nftTxn = await connectedContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.02")});
+        }
+        if (8 <= tokensMinted && tokensMinted < 10){
+          nftTxn = await connectedContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.04")});
+        }
+        if (10 <= tokensMinted && tokensMinted < 15){
+          nftTxn = await connectedContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.04")});
+
+        }
   
         console.log("Mining...please wait.")
         await nftTxn.wait();
