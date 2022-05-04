@@ -10,7 +10,7 @@ const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
-  const CONTRACT_ADDRESS = "0xA63eB815Da1B47D28080e084Fa2B5962a63D84bc";
+  const CONTRACT_ADDRESS = "0x988B2CFc99e49C8DBF15B25b9D24a8645b9db400";
 
   const checkIfWalletIsConnected = async () => {
     const { ethereum } = window;
@@ -87,7 +87,7 @@ const App = () => {
           \nCONTRACT ADDRESS: ${CONTRACT_ADDRESS}, TOKEN ID ${tokenId.toNumber()}`)
         });
         console.log("Going to pop wallet now to pay gas...")
-        let nftTxn = await connectedContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.2")});
+        let nftTxn = await connectedContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.05")});
   
         console.log("Mining...please wait.")
         await nftTxn.wait();
