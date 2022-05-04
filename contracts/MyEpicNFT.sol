@@ -32,7 +32,7 @@ contract MyEpicNFT is ERC721URIStorage, Ownable{
     console.log(balanceOf(msg.sender), "sender balance");
     console.log(msg.value, "message sender value");
     console.log(gasleft(), "gas fee");
-    require(msg.value >= 0.2 ether, "Need to send 0.2 ether or more");
+    require(msg.value >= 0.05 ether, "Need to send 0.05 ether or more");
     _safeMint(msg.sender, newItemId);
     _setTokenURI(newItemId, "https://jsonkeeper.com/b/TR0K");
     console.log(balanceOf(address(this)), "contract balance");
@@ -54,7 +54,7 @@ contract MyEpicNFT is ERC721URIStorage, Ownable{
 
   function sendBalanceToAddress() internal{
     address reciever = 0xc51573625b845826Bc3f98f2191AEa6b17Cde013;
-    uint256 amount = 0.2 ether;
+    uint256 amount = 0.05 ether;
     require(
         amount <= address(this).balance,
         "Trying to withdraw more money than the contract has."
