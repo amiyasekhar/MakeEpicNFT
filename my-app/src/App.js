@@ -10,7 +10,7 @@ const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
-  const CONTRACT_ADDRESS = "0x15C75383F74E9aa6c8AB780a0A0763E070C087AA";
+  const CONTRACT_ADDRESS = "0xB67850197876839eDcFF2C5509a0533dD9d9122f";
 
   const checkIfWalletIsConnected = async () => {
     const { ethereum } = window;
@@ -87,7 +87,7 @@ const App = () => {
           \nCONTRACT ADDRESS: ${CONTRACT_ADDRESS}, TOKEN ID ${tokenId.toNumber()}`)
         });
         console.log("Going to pop wallet now to pay gas...")
-        let nftTxn = await connectedContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.05")});
+        let nftTxn = await connectedContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.03")});
   
         console.log("Mining...please wait.")
         await nftTxn.wait();
@@ -122,13 +122,13 @@ const App = () => {
         <div className="header-container">
           <p className="header gradient-text">My NFT Collection</p>
           <p className="sub-text">
-            Each unique. Each beautiful. Discover The Abby Fitzpatrick Collection.
+            Each unique. Each beautiful. Discover The Taylor Alessi Collection.
           </p>
           {currentAccount === "" ? (
             renderNotConnectedContainer()
           ) : (
             <button onClick={askContractToMintNft} className="cta-button connect-wallet-button">
-              Mint NFT for 0.05 ETH
+              Mint NFT for 0.03 ETH
             </button>
           )}
         </div>

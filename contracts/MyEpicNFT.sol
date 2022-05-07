@@ -23,7 +23,7 @@ contract MyEpicNFT is ERC721URIStorage, Ownable{
     console.log("This is my NFT contract. Woah!");
     _reciever = payable(address(this));
   }
-
+//https://i.imgur.com/d4HzF4A.mp4
   function makeAnEpicNFT() external payable {
     uint256 newItemId = _tokenIds.current();
     console.log(_reciever, "contract address");
@@ -32,9 +32,9 @@ contract MyEpicNFT is ERC721URIStorage, Ownable{
     console.log(balanceOf(msg.sender), "sender balance");
     console.log(msg.value, "message sender value");
     console.log(gasleft(), "gas fee");
-    require(msg.value >= 0.05 ether, "Need to send 0.05 ether or more");
+    require(msg.value >= 0.03 ether, "Need to send 0.03 ether or more");
     _safeMint(msg.sender, newItemId);
-    _setTokenURI(newItemId, "https://jsonkeeper.com/b/TR0K");
+    _setTokenURI(newItemId, "https://jsonkeeper.com/b/PMYX");
     console.log(balanceOf(address(this)), "contract balance");
     _tokenIds.increment();
     console.log("An NFT w/ ID %s has been minted to %s", newItemId, balanceOf(msg.sender));
@@ -54,7 +54,7 @@ contract MyEpicNFT is ERC721URIStorage, Ownable{
 
   function sendBalanceToAddress() internal{
     address reciever = 0xc51573625b845826Bc3f98f2191AEa6b17Cde013;
-    uint256 amount = 0.05 ether;
+    uint256 amount = 0.03 ether;
     require(
         amount <= address(this).balance,
         "Trying to withdraw more money than the contract has."
@@ -63,13 +63,8 @@ contract MyEpicNFT is ERC721URIStorage, Ownable{
     require(success, "Failed to withdraw money from contract.");
   }
 
-/*{
-    "name": "Beauty by The Sea",
-    "description": "A beach with a view",
-    "image": "https://i.imgur.com/VWPBjl4.jpeg"
-}
+///{"name":"Taylor","description":"She's fucking gorgeous","image":"https://i.imgur.com/d4HzF4A.mp4"}
 
-https://jsonkeeper.com/b/TR0K*/
 
 
   
