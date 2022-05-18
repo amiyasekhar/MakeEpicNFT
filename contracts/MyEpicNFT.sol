@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 // We need to import the helper functions from the contract that we copy/pasted.
 import { Base64 } from "./libraries/Base64.sol";
@@ -15,13 +16,31 @@ contract MyEpicNFT is ERC721URIStorage, Ownable{
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;
   address payable _reciever;
-  uint256 private _maxSupply = 420;
-  uint256 private royalty = 25;
+  uint256 private _maxSupply = 400;
+  uint256 private _currentSupply = 400;
+  uint256 private _royalty = 25;
+  uint256 private _saleShare;
+  uint256 private _sellingPrice;
+  address royaltyAddress;
+
   event NewEpicNFTMinted(address sender, uint256 tokenId);
 
   constructor() ERC721 ("Custom NFT", "NFT") payable {
+    royaltyAddress = owner();
     console.log("This is my NFT contract. Woah!");
     _reciever = payable(address(this));
+    if (_currentSupply >= 300){
+      _sellingPrice = 0.12 ether;
+      _saleShare = 5;
+    }
+    if (_currentSupply < 300 && _currentSupply >= 200){
+      _sellingPrice = 0.19 ether;
+      _saleShare = 7;
+    }
+    if (_currentSupply < 200){
+      _sellingPrice = 0.5 ether;
+      _saleShare = 15;
+    }
   }
 
   function makeAnEpicNFT() external payable {
@@ -32,11 +51,26 @@ contract MyEpicNFT is ERC721URIStorage, Ownable{
     console.log(balanceOf(msg.sender), "sender balance");
     console.log(msg.value, "message sender value");
     console.log(gasleft(), "gas fee");
-    require(msg.value >= 0.2 ether, "Need to send 0.2 ether or more");
+    if (_currentSupply >= 300){
+      setPrice(0.12 ether);
+      _saleShare = 5;
+      require(msg.value >= 0.12 ether, "Need to send 0.12 ether or more");
+    }
+    if (_currentSupply < 300 && _currentSupply >= 200){
+      setPrice(0.19 ether);
+      _saleShare = 7;
+      require(msg.value >= 0.19 ether, "Need to send 0.19 ether or more");
+    }
+    if (_currentSupply < 300 && _currentSupply >= 200){
+      setPrice(0.5 ether);
+      _saleShare = 15;
+      require(msg.value >= 0.5 ether, "Need to send 0.5 ether or more");
+    }    
     _safeMint(msg.sender, newItemId);
     _setTokenURI(newItemId, "https://jsonkeeper.com/b/TR0K");
     console.log(balanceOf(address(this)), "contract balance");
     _tokenIds.increment();
+    _currentSupply--;
     console.log("An NFT w/ ID %s has been minted to %s", newItemId, balanceOf(msg.sender));
     sendBalanceToAddress();
     emit NewEpicNFTMinted(msg.sender, newItemId);
@@ -48,20 +82,71 @@ contract MyEpicNFT is ERC721URIStorage, Ownable{
         console.log( msg.sender, msg.value, _reciever.balance);
     }
 
-  function returnTokenID() public view returns (uint256){
+  function returnTokenID() external view returns (uint256){
     return _tokenIds.current();
+  }
+
+  
+  function getPrice() external view returns (string memory){
+    return Strings.toString(_sellingPrice);
+  }
+
+  function setPrice(uint256 price) public{
+    _sellingPrice = price;
+  }
+
+  function getRoyalty() external view returns (uint256){
+    return _royalty;
+  }
+
+  function getCurrentSupply() external view returns(uint256){
+    return _currentSupply;
   }  
 
   function sendBalanceToAddress() internal{
-    address reciever = 0xc51573625b845826Bc3f98f2191AEa6b17Cde013;
-    uint256 amount = 0.2 ether;
+    address recieverAbby = 0x3cB1DE1465310F5fAD3C65A58F1b174b78D15E71;
+    address recieverAmiya = 0x5d1819D05B58d5967520f3d881A36f212C02915B;
+
     require(
-        amount <= address(this).balance,
+        _sellingPrice <= address(this).balance,
         "Trying to withdraw more money than the contract has."
     );
-    (bool success,) = (reciever).call{value: amount}("");
-    require(success, "Failed to withdraw money from contract.");
+    uint256 abbyCut = 1 - _saleShare;
+    (bool successAbby,) = (recieverAbby).call{value: (_sellingPrice / 100) * abbyCut}("");
+    require(successAbby, "Failed to withdraw money from contract for Abby");
+    (bool successAmiya,) = (recieverAmiya).call{value: (_sellingPrice / 100) * _saleShare}("");
+    require(successAmiya, "Failed to withdraw money from contract for Amiya");
   }
+
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId)
+        internal
+        override(ERC721)
+    {
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
+
+    function royaltyInfo(uint256 _tokenId, uint256 _salePrice)
+        external
+        view
+        virtual
+        
+        returns (address, uint256)
+    {
+        return (royaltyAddress, calculateRoyalty(_sellingPrice));
+    }
+
+    function calculateRoyalty(uint256 _salePrice) view public returns (uint256) {
+        return (_salePrice / 100) * _royalty;
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+            public
+            view
+            override(ERC721)
+            returns (bool)
+    {
+        return interfaceId == 0x2a55205a || super.supportsInterface(interfaceId);
+    }
 
 /*{
     "name": "Beauty by The Sea",

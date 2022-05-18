@@ -9,8 +9,9 @@ const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 //const TOTAL_MINT_COUNT = 50;
 
 const App = () => {
+  let price;
   const [currentAccount, setCurrentAccount] = useState("");
-  const CONTRACT_ADDRESS = "0xA63eB815Da1B47D28080e084Fa2B5962a63D84bc";
+  const CONTRACT_ADDRESS = "0xc8EEEd7d4D399AfFAE7B73E7544423C2f7E5126A";
 
   const checkIfWalletIsConnected = async () => {
     const { ethereum } = window;
@@ -69,16 +70,50 @@ const App = () => {
       console.log(error);
     }
   }
+
+  const setPrice = async (connectedContract) => {
+    try {
+      const currentSupply = await connectedContract.getCurrentSupply();
+      //console.log(currentSupply.toNumber(), "current supply\n")
+      let txn;
+      let txnHash
+      if (currentSupply.toNumber() >= 300){
+        price = "0.12";
+        txn = await connectedContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.12"),  gasLimit: 1000000});
+        await txn.wait();
+
+
+      }
+      if (currentSupply.toNumber() < 300 && currentSupply.toNumber() >= 200){
+        price = "0.19";
+        txn = await connectedContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.19"), gasLimit: 1000000});
+        await txn.wait();
+
+      }
+      if (currentSupply.toNumber() < 200){
+        price = "0.5";
+        txn = await connectedContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.5"), gasLimit: 1000000});
+        await txn.wait();
+        txnHash = txn.hash
+
+      }
+      console.log(price, "price \n")
+      return [txn, txnHash];
+    } catch (error) {
+      console.log(error, " this is the error")
+    }
+  }
+  
   const askContractToMintNft = async () => {
 
   
     try {
       const { ethereum } = window;
-  
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
         const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, myEpicNft.abi, signer);
+
         connectedContract.on("NewEpicNFTMinted", (from, tokenId) => {
           console.log(from, tokenId.toNumber())
           alert(`Hey there! We've minted your NFT and sent it to your wallet. It may be blank right now. It can take a max of 10 min to show up on OpenSea. Here's the link: https://rinkeby.rarible.com/token/${CONTRACT_ADDRESS}:${tokenId.toNumber()}
@@ -87,12 +122,10 @@ const App = () => {
           \nCONTRACT ADDRESS: ${CONTRACT_ADDRESS}, TOKEN ID ${tokenId.toNumber()}`)
         });
         console.log("Going to pop wallet now to pay gas...")
-        let nftTxn = await connectedContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.2")});
-  
+        let nftTxn = setPrice(connectedContract)[0]//await connectedContract.makeAnEpicNFT({value: ethers.utils.parseEther(price)});
         console.log("Mining...please wait.")
-        await nftTxn.wait();
-        
-        console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
+        //await nftTxn.wait();
+        console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${setPrice(connectedContract)[1]}`);
   
       } else {
         console.log("Ethereum object doesn't exist!");
@@ -128,9 +161,22 @@ const App = () => {
             renderNotConnectedContainer()
           ) : (
             <button onClick={askContractToMintNft} className="cta-button connect-wallet-button">
-              Mint NFT for 0.2 ETH
+              Mint NFT for {price} ETH
             </button>
           )}
+          <p className="sub-text">
+            Each NFT, 400 in total, entitles you to a night out with me and my beautiful
+            girlfriends every month at any club in Boston up until the month of October.
+          </p>
+          <p className="sub-text">
+            The first 100 NFTs will sell for 0.12 ETH.
+          </p>
+          <p className="sub-text">
+            The next 100 NFTs will sell for 0.19 ETH.
+          </p>
+          <p className="sub-text">
+            The last 200 NFTs will sell for 0.5 ETH.
+          </p>
         </div>
       </div>
     </div>
