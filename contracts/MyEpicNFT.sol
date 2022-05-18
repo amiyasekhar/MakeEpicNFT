@@ -153,7 +153,6 @@ contract MyEpicNFT is ERC721URIStorage, Ownable{
     "description": "A beach with a view",
     "image": "https://i.imgur.com/VWPBjl4.jpeg"
 }
-
 https://jsonkeeper.com/b/TR0K*/
 
 
