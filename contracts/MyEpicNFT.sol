@@ -16,8 +16,8 @@ contract MyEpicNFT is ERC721URIStorage, Ownable{
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;
   address payable _reciever;
-  uint256 private _maxSupply = 400;
-  uint256 private _currentSupply = 400;
+  uint256 private _maxSupply = 10;
+  uint256 private _currentSupply = 10;
   uint256 private _royalty = 25;
   uint256 private _saleShare;
   uint256 private _sellingPrice;
@@ -29,21 +29,11 @@ contract MyEpicNFT is ERC721URIStorage, Ownable{
     royaltyAddress = owner();
     console.log("This is my NFT contract. Woah!");
     _reciever = payable(address(this));
-    if (_currentSupply >= 300){
-      _sellingPrice = 0.12 ether;
-      _saleShare = 5;
-    }
-    if (_currentSupply < 300 && _currentSupply >= 200){
-      _sellingPrice = 0.19 ether;
-      _saleShare = 7;
-    }
-    if (_currentSupply < 200){
-      _sellingPrice = 0.5 ether;
-      _saleShare = 15;
-    }
+    setPriceAndShare();
   }
 
   function makeAnEpicNFT() external payable {
+    require(_currentSupply > 0, "No more NFTs");
     uint256 newItemId = _tokenIds.current();
     console.log(_reciever, "contract address");
     console.log(balanceOf(_reciever), "contract balance");
@@ -51,22 +41,10 @@ contract MyEpicNFT is ERC721URIStorage, Ownable{
     console.log(balanceOf(msg.sender), "sender balance");
     console.log(msg.value, "message sender value");
     console.log(gasleft(), "gas fee");
-    if (_currentSupply >= 300){
-      setPrice(0.12 ether);
-      _saleShare = 5;
-      require(msg.value >= 0.12 ether, "Need to send 0.12 ether or more");
-    }
-    if (_currentSupply < 300 && _currentSupply >= 200){
-      setPrice(0.19 ether);
-      _saleShare = 7;
-      require(msg.value >= 0.19 ether, "Need to send 0.19 ether or more");
-    }
-    if (_currentSupply < 300 && _currentSupply >= 200){
-      setPrice(0.5 ether);
-      _saleShare = 15;
-      require(msg.value >= 0.5 ether, "Need to send 0.5 ether or more");
-    }    
+    setPriceAndShare();
+    require(msg.value >= _sellingPrice, "Need to send 0.12 ether or more");
     _safeMint(msg.sender, newItemId);
+    console.log("minted nft", msg.sender, newItemId);
     _setTokenURI(newItemId, "https://jsonkeeper.com/b/TR0K");
     console.log(balanceOf(address(this)), "contract balance");
     _tokenIds.increment();
@@ -87,12 +65,25 @@ contract MyEpicNFT is ERC721URIStorage, Ownable{
   }
 
   
-  function getPrice() external view returns (string memory){
-    return Strings.toString(_sellingPrice);
+  function getPrice() external view returns (uint256){
+    return _sellingPrice;
   }
 
-  function setPrice(uint256 price) public{
-    _sellingPrice = price;
+  function setPriceAndShare() public{
+    if (_currentSupply >= 8){
+      _sellingPrice = 0.12 ether;
+      _saleShare = 5;
+    }
+    if (_currentSupply < 8 && _currentSupply >= 5){
+      _sellingPrice = 0.19 ether;
+      _saleShare = 7;
+    }
+    if (_currentSupply < 5 && _currentSupply > 0){
+      _sellingPrice = 0.5 ether;
+      _saleShare = 15;
+    }
+    console.log("set price and share", _sellingPrice, _saleShare);
+
   }
 
   function getRoyalty() external view returns (uint256){
@@ -153,6 +144,7 @@ contract MyEpicNFT is ERC721URIStorage, Ownable{
     "description": "A beach with a view",
     "image": "https://i.imgur.com/VWPBjl4.jpeg"
 }
+
 https://jsonkeeper.com/b/TR0K*/
 
 

@@ -11,7 +11,7 @@ const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 const App = () => {
   let price;
   const [currentAccount, setCurrentAccount] = useState("");
-  const CONTRACT_ADDRESS = "0xc8EEEd7d4D399AfFAE7B73E7544423C2f7E5126A";
+  const CONTRACT_ADDRESS = "0xA5fff6289DeFF7474bA73ac7cB3e44DD3Ad16904";
 
   const checkIfWalletIsConnected = async () => {
     const { ethereum } = window;
@@ -71,34 +71,45 @@ const App = () => {
     }
   }
 
-  const setPrice = async (connectedContract) => {
+  const setPriceAndBuy = async (connectedContract) => {
     try {
+        connectedContract.on("NewEpicNFTMinted", (from, tokenId) => {
+          console.log(from, tokenId.toNumber())
+          alert(`Hey there! We've minted your NFT and sent it to your wallet. It may be blank right now. It can take a max of 10 min to show up on OpenSea. Here's the link: https://rinkeby.rarible.com/token/${CONTRACT_ADDRESS}:${tokenId.toNumber()}
+          \nhttps://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}
+          \nThe following information will be needed to import your NFT into your wallet
+          \nCONTRACT ADDRESS: ${CONTRACT_ADDRESS}, TOKEN ID ${tokenId.toNumber()}`)
+        });
       const currentSupply = await connectedContract.getCurrentSupply();
-      //console.log(currentSupply.toNumber(), "current supply\n")
-      let txn;
-      let txnHash
+      console.log(currentSupply.toNumber(), "current supply\n")
+      let nftTxn;
+      console.log("Going to pop wallet now to pay gas...")
       if (currentSupply.toNumber() >= 300){
         price = "0.12";
-        txn = await connectedContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.12"),  gasLimit: 1000000});
-        await txn.wait();
+        nftTxn = await connectedContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.12"),  gasLimit: 10000000});
+        console.log("Mining...please wait.")
+        await nftTxn.wait();
+        console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
 
 
       }
       if (currentSupply.toNumber() < 300 && currentSupply.toNumber() >= 200){
         price = "0.19";
-        txn = await connectedContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.19"), gasLimit: 1000000});
-        await txn.wait();
+        nftTxn = await connectedContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.19"), gasLimit: 10000000});
+        console.log("Mining...please wait.")
+        await nftTxn.wait();
+        console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
 
       }
       if (currentSupply.toNumber() < 200){
         price = "0.5";
-        txn = await connectedContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.5"), gasLimit: 1000000});
-        await txn.wait();
-        txnHash = txn.hash
+        nftTxn = await connectedContract.makeAnEpicNFT({value: ethers.utils.parseEther("0.5"), gasLimit: 10000000});
+        console.log("Mining...please wait.")
+        await nftTxn.wait();
+        console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
 
       }
       console.log(price, "price \n")
-      return [txn, txnHash];
     } catch (error) {
       console.log(error, " this is the error")
     }
@@ -113,8 +124,8 @@ const App = () => {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
         const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, myEpicNft.abi, signer);
-
-        connectedContract.on("NewEpicNFTMinted", (from, tokenId) => {
+        setPriceAndBuy(connectedContract);
+        /*connectedContract.on("NewEpicNFTMinted", (from, tokenId) => {
           console.log(from, tokenId.toNumber())
           alert(`Hey there! We've minted your NFT and sent it to your wallet. It may be blank right now. It can take a max of 10 min to show up on OpenSea. Here's the link: https://rinkeby.rarible.com/token/${CONTRACT_ADDRESS}:${tokenId.toNumber()}
           \nhttps://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}
@@ -125,7 +136,7 @@ const App = () => {
         let nftTxn = setPrice(connectedContract)[0]//await connectedContract.makeAnEpicNFT({value: ethers.utils.parseEther(price)});
         console.log("Mining...please wait.")
         //await nftTxn.wait();
-        console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${setPrice(connectedContract)[1]}`);
+        console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${setPrice(connectedContract)[1]}`);*/
   
       } else {
         console.log("Ethereum object doesn't exist!");
