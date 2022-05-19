@@ -92,15 +92,15 @@ contract MyEpicNFT is ERC721URIStorage, Ownable{
   function setPriceAndShare() public{
     if (_currentSupply >= 300){
       _sellingPrice = 0.12 ether;
-      _saleShare = 5000;
+      _saleShare = 3000;
     }
     if (_currentSupply < 300 && _currentSupply >= 200){
       _sellingPrice = 0.19 ether;
-      _saleShare = 5000;
+      _saleShare = 3500;
     }
     if (_currentSupply < 200 && _currentSupply >= 0){
       _sellingPrice = 0.5 ether;
-      _saleShare = 5000;
+      _saleShare = 4000;
     }
     //console.log("set price and share", _sellingPrice, _saleShare, "\n");
 
