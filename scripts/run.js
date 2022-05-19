@@ -6,20 +6,25 @@ const main = async () => {
   const nftContract = await nftContractFactory.deploy();
   await nftContract.deployed();
   console.log("Contract deployed to:", nftContract.address);
+  let price, supply, nftTxn;
+  supply = 10;
 
-  let supply = await nftContract.getCurrentSupply();
+  const senderAddress = "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"
+  /*let supply = await nftContract.getCurrentSupply();
   let price = await nftContract.getPrice();
   console.log((supply).toNumber(), " Current Starting Supply \n");
   console.log(ethers.utils.formatEther(price), " Current Starting Price \n");
   let nftTxn = await nftContract.makeAnEpicNFT({value: ethers.utils.parseEther(ethers.utils.formatEther(price)), gasLimit: 10000000});
-  console.log(nftTxn);
+  console.log(nftTxn, "\n");*/
 
-  /*while (supply > 0){
-    price = ethers.utils.formatEther(await nftContract.getPrice())
+  //testing the mintability
+  while (supply > 0){
+    price = await nftContract.getPrice();
+    console.log(ethers.utils.formatEther(price), "current price");
     supply = await nftContract.getCurrentSupply();
-    let nftTxn = await nftContract.makeAnEpicNFT({value: ethers.utils.parseEther(price), gasLimit: 10000000})
-    console.log("current price supply and nft", price, supply, nftTxn, "\n");
-  }*/
+    console.log((supply).toNumber(), "current supply");
+    nftTxn = await nftContract.makeAnEpicNFT({value: ethers.utils.parseEther(ethers.utils.formatEther(price)), gasLimit: 10000000});
+  }
 
 
   // Call the function.

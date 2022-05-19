@@ -1,32 +1,78 @@
+import "./ERC721.sol";
+import "./ERC721Enumerable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+pragma solidity >=0.7.0 <0.9.0;
+
+contract NFT is ERC721Enumerable, Ownable {
+    using Strings for uint256;
+
+    uint256 public cost = 1 ether;
+    uint256 public maxSupply = 20;
+
+    string baseURI;
+    string public baseExtension = ".json";
+
+    address public artist;
+    uint256 public royalityFee;
+
+    event Sale(address from, address to, uint256 value);
 
 
-    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
-        require(_exists(tokenId), "ERC721URIStorage: URI query for nonexistent token");
+    // Public functions
+    function mint() public payable {
+        uint256 supply = totalSupply();
+        require(supply <= maxSupply);
 
-        string memory _tokenURI = _tokenURIs[tokenId];
-        string memory base = _baseURI();
+        if (msg.sender != owner()) {
+            require(msg.value >= cost);
 
-        // If there is no base URI, return the token URI.
-        if (bytes(base).length == 0) {
-            return _tokenURI;
+            // Pay royality to artist, and remaining to deployer of contract
+
+            uint256 royality = (msg.value * royalityFee) / 100;
+            _payRoyality(royality);
+
+            (bool success2, ) = payable(owner()).call{
+                value: (msg.value - royality)
+            }("");
+            require(success2);
         }
-        // If both are set, concatenate the baseURI and tokenURI (via abi.encodePacked).
-        if (bytes(_tokenURI).length > 0) {
-            return string(abi.encodePacked(base, _tokenURI));
+
+        _safeMint(msg.sender, supply + 1);
+    }
+
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory _data
+    ) public payable override {
+        require(
+            _isApprovedOrOwner(_msgSender(), tokenId),
+            "ERC721: transfer caller is not owner nor approved"
+        );
+
+        if (msg.value > 0) {
+            uint256 royality = (msg.value * royalityFee) / 100;
+            _payRoyality(royality);
+
+            (bool success2, ) = payable(from).call{value: msg.value - royality}(
+                ""
+            );
+            require(success2);
+
+            emit Sale(from, to, msg.value);
         }
 
-        return super.tokenURI(tokenId);
+        _safeTransfer(from, to, tokenId, _data);
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(IERC165, ERC721) returns (bool) {
-        return interfaceId == type(IERC721Enumerable).interfaceId || super.supportsInterface(interfaceId);
+    // Internal functions
+
+    function _payRoyality(uint256 _royalityFee) internal {
+        (bool success1, ) = payable(artist).call{value: _royalityFee}("");
+        require(success1);
     }
 
-    /**
-     * @dev See {IERC721Enumerable-tokenOfOwnerByIndex}.
-     */
-    function tokenOfOwnerByIndex(address owner, uint256 index) public view virtual override returns (uint256) {
-        require(index < ERC721.balanceOf(owner), "ERC721Enumerable: owner index out of bounds");
-        return _ownedTokens[owner][index];
-    }
-
+    // Owner functions
+}
