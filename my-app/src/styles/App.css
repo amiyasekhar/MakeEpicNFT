@@ -8,9 +8,11 @@
 .container {
   height: 100%;
   background-color: #0d1116;
+  background-image: url(https://i.imgur.com/VWPBjl4.jpeg);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow: scroll;
 }
 
 .header-container {
@@ -26,10 +28,37 @@
 .sub-text {
   font-size: 25px;
   color: white;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-weight: bolder;
+  margin-left: 5%;
+  margin-right: 5%;
+
 }
 
+.bottom-text {
+  margin-top: 20%;
+  font-size: 15px;
+  color: black;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-weight: bolder;
+  margin-left: 5%;
+  margin-right: 5%;
+
+}
+
+.bottom-text2 {
+  font-size: 15px;
+  color: black;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-weight: bolder;
+  margin-left: 5%;
+  margin-right: 5%;
+
+}
+
+
 .gradient-text {
-  background: -webkit-linear-gradient(left, #60c657 30%, #35aee2 60%);
+  background: -webkit-linear-gradient(left, #60c657 30%, #0571a0 60%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -87,6 +116,21 @@
   color: white;
   font-size: 16px;
   font-weight: bold;
+}
+
+a{
+  color: black;
+}
+
+.mini-text{
+  background: -webkit-linear-gradient(left, #60c657 30%, #0571a0 60%);
+  font-size: 12.5px;
+  color: white;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-weight: bolder;
+  margin-left: 5%;
+  margin-right: 5%;
+
 }
 
 /* KeyFrames */
