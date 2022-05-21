@@ -10,7 +10,7 @@ const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
-  const CONTRACT_ADDRESS = "0xE0884ed74755efbcf1932a69cb2EEAd51aec8280";
+  const CONTRACT_ADDRESS = "0xc97B3df1b08755F83af907a550C3E21BDad74C87";
   const [supply, setSupply] = useState('');
   const [price, setPrice] = useState('');
   const [hash, setHash] = useState('');
