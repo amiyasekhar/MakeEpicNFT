@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from "react";
 import './styles/App.css';
-import twitterLogo from './assets/twitter-logo.svg';
 import myEpicNft from './utils/MyEpicNFT.json';
 import { ethers } from "ethers";
-const TWITTER_HANDLE = '_buildspace';
-const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 //const OPENSEA_LINK = '';
 //const TOTAL_MINT_COUNT = 50;
 
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
-  const CONTRACT_ADDRESS = "0xc97B3df1b08755F83af907a550C3E21BDad74C87";
+  const CONTRACT_ADDRESS = "0x1B95B9b497F7F3F218461Bcf27D0833d8b842DfF";
   const [supply, setSupply] = useState('');
   const [price, setPrice] = useState('');
   const [hash, setHash] = useState('');
@@ -18,8 +15,9 @@ const App = () => {
   const [raribleLink, setRaribleLink] = useState("https://rarible.com/");
   const [etherscanLink, setEtherscanLink] = useState("https://etherscan.io/tx/")
   const [token, setToken] = useState(null);
-  console.log(raribleLink);
-  console.log(openSeaLink)
+  console.log("default rarible link", raribleLink);
+  console.log("default opensea link", openSeaLink);
+
   const checkIfWalletIsConnected = async () => {
     const { ethereum } = window;
 
@@ -59,8 +57,13 @@ const App = () => {
 
       // String, hex code of the chainId of the Rinkebey test network
       const ethMainnet = "0x1";  //0x4 for rinkeby
-      if (chainId !== ethMainnet) {
+      const ethTestNetRinkeby = "0x4;"
+      if (chainId !== ethMainnet || chainId !== ethTestNetRinkeby) {
         alert("You are not connected to the Ethereum Network!");
+        console.log("you aren't connected to eth network");
+      }
+      else{
+        console.log("you're connected")
       }
 
       /*
@@ -74,7 +77,7 @@ const App = () => {
       console.log("Connected", accounts[0]);
       setCurrentAccount(accounts[0]);
     } catch (error) {
-      console.log(error);
+      console.log("this is the error", error);
     }
   }
   const askContractToMintNft = async () => {
@@ -114,7 +117,7 @@ const App = () => {
         let txnHash = nftTxn.hash
         setHash(txnHash);
         
-        if (hash != ''){
+        if (hash !==''){
           setOpenSeaLink(openSeaLink+`/${CONTRACT_ADDRESS}/${token.toNumber()}`);
           setRaribleLink(raribleLink+`token/${CONTRACT_ADDRESS}/${token.toNumber()}`);
           setEtherscanLink(etherscanLink+`${hash}`);

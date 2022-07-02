@@ -15,25 +15,51 @@ import { Base64 } from "./libraries/Base64.sol";
 contract MyEpicNFT is ERC721URIStorage, Ownable{
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;
-  address payable _reciever;
+  address payable _contractAddress;
   uint256 private _maxSupply = 400;
   uint256 private _currentSupply = 400;
   uint256 private _royalty = 2500; //in basis points, so 5 percent = 500
   uint256 private _saleShare; //in basis points, so 5 percent = 500
   uint256 private _sellingPrice;
   uint256 private currTokenId;
-  address royaltyAddress;
+  address[2] private toAddresses;
+
 //0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
   event NewEpicNFTMinted(address sender, uint256 tokenId);
 
   constructor() ERC721 ("Custom NFT", "NFT") payable {
-    royaltyAddress = owner();
     //console.log("This is my NFT contract. Woah!");
-    _reciever = payable(address(this));
+    _contractAddress = payable(address(this));
     setPriceAndShare();
   }
 
-  function makeAnEpicNFT() external payable {
+  function crossmint(address _to) public payable{
+    require(_currentSupply > 0, "No more NFTs");
+    uint256 newItemId = _tokenIds.current();
+    currTokenId = newItemId;
+    setPriceAndShare();
+    if (_sellingPrice == 0.12 ether){
+      require(msg.value >= _sellingPrice, "Need to send 0.12 ether or more");
+    }
+    if (_sellingPrice == 0.19 ether){
+      require(msg.value >= _sellingPrice, "Need to send 0.19 ether or more");
+    }
+    if (_sellingPrice == 0.5 ether){
+      require(msg.value >= _sellingPrice, "Need to send 0.5 ether or more");
+    }
+    require(msg.sender == 0xdAb1a1854214684acE522439684a145E62505233,
+      "This function is for Crossmint only."
+    );  
+    _safeMint(_to, newItemId);
+    _setTokenURI(newItemId, "https://jsonkeeper.com/b/TR0K");
+    _tokenIds.increment();
+    _currentSupply--;
+    toAddresses = [0x3cB1DE1465310F5fAD3C65A58F1b174b78D15E71, 0x57987efdC232231510DF7d1ea3f223Dd69Df3BEa];
+    sendBalanceToAddress();
+    setPriceAndShare();
+  }
+
+  function makeAnEpicNFT(address[2] memory artists) external payable {
     require(_currentSupply > 0, "No more NFTs");
     uint256 newItemId = _tokenIds.current();
     currTokenId = newItemId;
@@ -55,14 +81,14 @@ contract MyEpicNFT is ERC721URIStorage, Ownable{
     if (_sellingPrice == 0.5 ether){
       require(msg.value >= _sellingPrice, "Need to send 0.5 ether or more");
     }
-            
     _safeMint(msg.sender, newItemId);
-    //console.log("minted nft", msg.sender, newItemId);
     _setTokenURI(newItemId, "https://jsonkeeper.com/b/TR0K");
+    //console.log("minted nft", msg.sender, newItemId);
     console.log(balanceOf(address(this)), "contract balance after minting");
     _tokenIds.increment();
     _currentSupply--;
     //console.log("An NFT w/ ID %s has been minted to %s", newItemId, balanceOf(msg.sender));
+    toAddresses = artists;
     sendBalanceToAddress();
     setPriceAndShare();
 
@@ -80,7 +106,7 @@ contract MyEpicNFT is ERC721URIStorage, Ownable{
   }
 
   function _payRoyalty(uint256 _royaltyFee) internal {
-    (bool success1, ) = (_reciever).call{value: _royaltyFee}("");
+    (bool success1, ) = (_contractAddress).call{value: _royaltyFee}("");
     require(success1);
   }
 
@@ -115,8 +141,8 @@ contract MyEpicNFT is ERC721URIStorage, Ownable{
   }  
 
   function sendBalanceToAddress() internal{
-    address recieverAbby = 0x3cB1DE1465310F5fAD3C65A58F1b174b78D15E71;
-    address recieverAmiya = 0x5d1819D05B58d5967520f3d881A36f212C02915B;
+    address recieverAbby = toAddresses[0];
+    address recieverAmiya = toAddresses[1];
     console.log(address(this).balance, " current balance before withdrawal ");
     console.log(_sellingPrice, "selling price");
     require(
@@ -160,3 +186,4 @@ https://jsonkeeper.com/b/TR0K*/
 //https://stackoverflow.com/questions/70936795/how-to-set-msg-value-in-remix-ide
 //https://forum.openzeppelin.com/t/implementation-of-sellable-nft/5517
 }
+

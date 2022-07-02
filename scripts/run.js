@@ -9,7 +9,7 @@ const main = async () => {
   let price, supply, nftTxn;
   supply = 10;
 
-  const senderAddress = "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"
+  const artistAddresses = ["0x3cB1DE1465310F5fAD3C65A58F1b174b78D15E71", "0x57987efdC232231510DF7d1ea3f223Dd69Df3BEa"];
   /*let supply = await nftContract.getCurrentSupply();
   let price = await nftContract.getPrice();
   console.log((supply).toNumber(), " Current Starting Supply \n");
@@ -23,7 +23,7 @@ const main = async () => {
     console.log(ethers.utils.formatEther(price), "current price");
     supply = await nftContract.getCurrentSupply();
     console.log((supply).toNumber(), "current supply");
-    nftTxn = await nftContract.makeAnEpicNFT({value: ethers.utils.parseEther(ethers.utils.formatEther(price)), gasLimit: 10000000});
+    nftTxn = await nftContract.makeAnEpicNFT(artistAddresses, {value: ethers.utils.parseEther(ethers.utils.formatEther(price)), gasLimit: 10000000});
   }
 
 
