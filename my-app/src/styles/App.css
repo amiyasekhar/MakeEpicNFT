@@ -83,6 +83,10 @@
   animation: gradient-animation 4s ease infinite;
 }
 
+.crossmint-button {
+  margin-left: 44.25%;
+}
+
 .mint-button {
   background: -webkit-linear-gradient(left, #a200d6, #ff6fdf);
   background-size: 200% 200%;

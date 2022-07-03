@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import './styles/App.css';
 import myEpicNft from './utils/MyEpicNFT.json';
 import { ethers } from "ethers";
+import { CrossmintPayButton } from "@crossmint/client-sdk-react-ui";
 //const OPENSEA_LINK = '';
 //const TOTAL_MINT_COUNT = 50;
+require('dotenv').config();
 
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
@@ -19,21 +21,30 @@ const App = () => {
   let globalProvider = null;
   let globalSigner = null;
   let globalConnectedContract = null;
+  let secondaryGlobalProvider = null;
+  let secondaryGlobalConnectedContract = null;
+  let crossmintPrice = null;
+  let crossmintSupply = null;
   console.log("default rarible link", raribleLink);
   console.log("default opensea link", openSeaLink);
+
+  const updateDislplayLabel = async (outstandingSupply, cost, hash) => {
+    setDisplayText(`Supply: ${outstandingSupply.toNumber()}, Price: ${ethers.utils.formatEther(cost)}, Hash: ${hash}`);
+
+  }
 
   const checkIfWalletIsConnected = async () => {
     const { ethereum } = window;
 
     if (!ethereum) {
-      const provider = new ethers.getDefaultProvider('https://eth-rinkeby.alchemyapi.io/v2/Ky5-_i9Lkd1buVYM5zxMymn-SShw4023');
+      const provider = new ethers.getDefaultProvider(process.env.ALCHEMY_URL);
       const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, myEpicNft.abi, provider);
       globalProvider = provider;
       globalConnectedContract = connectedContract;
       console.log(globalProvider, "def provider");
       console.log(globalConnectedContract, "contract from def provider");
       console.log("Make sure you have metamask!");
-      return;
+      //return;
     } else {
       const provider = new ethers.providers.Web3Provider(ethereum);
       const signer = provider.getSigner();
@@ -45,7 +56,6 @@ const App = () => {
       console.log(globalSigner, "signer from eth provider");
       console.log(globalConnectedContract, "contract from eth provider");
       console.log("We have the ethereum object", ethereum);
-
     }
     let outstandingSupply = await globalConnectedContract.getCurrentSupply();
     let cost = await globalConnectedContract.getPrice();
@@ -53,7 +63,11 @@ const App = () => {
     setSupply(outstandingSupply.toNumber())
     console.log(outstandingSupply.toNumber(), "This is outstanding supply");
     console.log(ethers.utils.formatEther(cost), "the price");
-    setDisplayText(`Supply: ${outstandingSupply.toNumber()}, Price: ${ethers.utils.formatEther(cost)}, Hash: ${hash}`);
+    await updateDislplayLabel(outstandingSupply, cost, hash);
+    crossmintPrice = ethers.utils.formatEther(cost);
+    crossmintSupply = JSON.stringify(outstandingSupply.toNumber());
+    console.log(crossmintPrice, typeof crossmintPrice === 'string');
+    console.log(typeof crossmintPrice === 'string', typeof crossmintSupply === 'string', "supply and price both strings");
     const accounts = await ethereum.request({ method: 'eth_accounts' });
 
     if (accounts.length !== 0) {
@@ -192,7 +206,7 @@ const App = () => {
               Each NFT gives you access to hangout with Abby's girl friends in the VIP section of clubs in Boston, including but not limited to The Grand, Memoire, and Mariel, for the whole month of June. 
             </p>
             <p className={"sub-text"}>
-              First 100 NFTs will mint for 0.12 ETH, the next 100 will mint for 0.19 ETH. the last 200 will mint for 0.5 ETH. Click "Mint" to see the price and supply, after which you may choose to purchase an NFT.
+              First 100 NFTs will mint for 0.12 ETH, the next 100 will mint for 0.19 ETH. the last 200 will mint for 0.5 ETH. Refresh to see updated supply and price.
             </p>
             <p className={"mini-text"}>
               {displayText}
@@ -204,6 +218,23 @@ const App = () => {
                 Mint
               </button>
             )}
+            <p>
+              OR
+            </p>
+            <p className="crossmint-button">
+  `            <CrossmintPayButton
+                collectionTitle="The Abby Fitzpatrick Collection Rinkeby"    
+                collectionDescription="A collection of Abby's NFTs, the holders of which are entitled to special perks"
+                clientId="6659fe32-c033-4831-9532-60c1586e6347"
+                environment="staging"
+                mintConfig={{
+                    "type":"erc-721",
+                    "count": {crossmintSupply},
+                    "totalPrice": {crossmintPrice}
+                    // your custom minting arguments...
+                }}
+              />`
+            </p>
             <p className={"bottom-text"}>
               If you are using a phone, make sure you access this website through metamask as shown <a href= "https://youtu.be/8BL7COrxJvg?t=120" target="_blank" rel="noreferrer noopener">here </a>
             </p>
