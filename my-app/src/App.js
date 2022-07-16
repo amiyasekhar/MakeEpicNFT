@@ -59,13 +59,13 @@ const App = () => {
     }
     let outstandingSupply = await globalConnectedContract.getCurrentSupply();
     let cost = await globalConnectedContract.getPrice();
-    setPrice(cost);
+    setPrice(ethers.utils.formatEther(cost));
     setSupply(outstandingSupply.toNumber())
     console.log(outstandingSupply.toNumber(), "This is outstanding supply");
-    console.log(ethers.utils.formatEther(cost), "the price");
+    console.log(price, "the price");
     await updateDislplayLabel(outstandingSupply, cost, hash);
-    crossmintPrice = ethers.utils.formatEther(cost);
-    crossmintSupply = JSON.stringify(outstandingSupply.toNumber());
+    crossmintPrice = "" + ethers.utils.formatEther(cost);
+    crossmintSupply = "" + JSON.stringify(outstandingSupply.toNumber());
     console.log(crossmintPrice, typeof crossmintPrice === 'string');
     console.log(typeof crossmintPrice === 'string', typeof crossmintSupply === 'string', "supply and price both strings");
     const accounts = await ethereum.request({ method: 'eth_accounts' });
@@ -229,8 +229,8 @@ const App = () => {
                 environment="staging"
                 mintConfig={{
                     "type":"erc-721",
-                    "count": {crossmintSupply},
-                    "totalPrice": {crossmintPrice}
+                    "count": supply + "",
+                    "totalPrice": price
                     // your custom minting arguments...
                 }}
               />`
