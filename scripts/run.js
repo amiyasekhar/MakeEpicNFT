@@ -20,9 +20,8 @@ const main = async () => {
   //testing the mintability
   while (supply > 0){
     price = await nftContract.getPrice();
-    console.log(ethers.utils.formatEther(price), "current price");
     supply = await nftContract.getCurrentSupply();
-    console.log((supply).toNumber(), "current supply");
+    console.log(ethers.utils.formatEther(price), (supply).toNumber(), typeof("" + ethers.utils.formatEther(price)) == "string", typeof("" + (supply).toNumber()) == "string","current price, current supply both are strings\n");
     nftTxn = await nftContract.makeAnEpicNFT(artistAddresses, {value: ethers.utils.parseEther(ethers.utils.formatEther(price)), gasLimit: 10000000});
   }
 

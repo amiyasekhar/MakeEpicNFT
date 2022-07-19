@@ -61,7 +61,7 @@ const App = () => {
     let cost = await globalConnectedContract.getPrice();
     setPrice(ethers.utils.formatEther(cost));
     setSupply(outstandingSupply.toNumber())
-    console.log(outstandingSupply.toNumber(), "This is outstanding supply");
+    console.log(outstandingSupply, "This is outstanding supply");
     console.log(price, "the price");
     await updateDislplayLabel(outstandingSupply, cost, hash);
     crossmintPrice = "" + ethers.utils.formatEther(cost);
