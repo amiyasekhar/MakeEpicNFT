@@ -9,7 +9,7 @@ require('dotenv').config();
 
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
-  const CONTRACT_ADDRESS = "0xCd3194fC20ACe6D514F1596607031588171a9B5d";
+  const CONTRACT_ADDRESS = "0x6F20Fe1c6FbA85248a3300826d7fcb2c2E0D0c4f";
   const [supply, setSupply] = useState('');
   const [price, setPrice] = useState('');
   const [hash, setHash] = useState('');
@@ -223,9 +223,9 @@ const App = () => {
             </p>
             <p className="crossmint-button">
   `            <CrossmintPayButton
-                collectionTitle="The Abby Fitzpatrick Collection Rinkeby"    
+                collectionTitle="The Abby Fitzpatrick Collection L2 Support"    
                 collectionDescription="A collection of Abby's NFTs, the holders of which are entitled to special perks"
-                clientId="6659fe32-c033-4831-9532-60c1586e6347"
+                clientId="885a57ed-4998-42f1-84a2-61389aeb41fc"
                 environment="staging"
                 mintConfig={{
                     "type":"erc-721",
